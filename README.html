@@ -1,0 +1,173 @@
+
+<!DOCTYPE html
+PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+--><title>README - Demo of GuiSliders</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-06-27"><meta name="DC.source" content="./readmeExtras/README.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+</style></head><body><div class="content"><h1>README - Demo of GuiSliders</h1><!--introduction--><p>GuiSliders is a class that greatly simplifies development overhead associated with sliders. The class constructs a uipanel with a user-specified number of sliders. It automatically links editable text boxes to the slider value and bounds. All changes to the slider values are funneled up through a single event. The user need only define one event handler.</p><p>Michael R. Walker II 6/21/2017</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Getting Started</a></li><li><a href="#2">Configure plotting object</a></li><li><a href="#3">Configure GUI Sliders</a></li><li><a href="#4">Link Sliders to Plotting Object</a></li></ul></div><h2 id="1">Getting Started</h2><p>A simple interpolation problem is used to demonstrate efficient plot update techniques. We define a class, ExamplePlotter, which services the plot updates and maintains copies of the associated plot handles. We then construct a GuiSliders panel in a separate figure. Finally we link the GuiSliders object to the ExamplePlotter object.</p><pre class="codeinput">clear;
+
+<span class="comment">% Reserve separate figures for plot and gui</span>
+figPlot = figure(1);
+figPlot.Visible = <span class="string">'off'</span>;
+clf;
+figGui = figure(3);
+figGui.Visible = <span class="string">'off'</span>;
+clf;
+
+<span class="comment">% Initial control coordinates for interpolation.</span>
+<span class="comment">% Note, we assume x(1) = 0, and x(end) = 1.</span>
+x23 = [.3 .7];
+y = [3 2 9 8];
+</pre><h2 id="2">Configure plotting object</h2><p>Plotting will be handled by a separate object. Here we construct this object and draw the initial plot.</p><pre class="codeinput"><span class="comment">% Make parent figure active</span>
+figure(figPlot);
+<span class="comment">% Setup control parameters</span>
+x0 = [x23,y];
+
+hplotter = ExamplePlotter(x0);
+</pre><img vspace="5" hspace="5" src="./readmeExtras/README_01.png" style="width:560px;height:420px;" alt=""> <h2 id="3">Configure GUI Sliders</h2><p>Guisliders will be drawn in a separate figure. Here we construct the GuiSliders object and resize the figure window accordingly.</p><pre class="codeinput">figure(figGui); <span class="comment">% Make parent figure active</span>
+bounds = [repmat([0.01 0.99],2,1); repmat([0,10],4,1)];
+labels = {<span class="string">'x2'</span>,<span class="string">'x3'</span>,<span class="string">'y1'</span>,<span class="string">'y2'</span>,<span class="string">'y3'</span>,<span class="string">'y4'</span>};
+hsliders = GuiSliders(x0,<span class="string">'bounds'</span>,bounds,<span class="string">'labels'</span>,labels);
+
+<span class="comment">% Remove most decorations &amp; shrink to panel size</span>
+set(figGui,<span class="string">'Name'</span>,<span class="string">'GUI Sliders'</span>,<span class="string">'NumberTitle'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+<span class="string">'DockControls'</span>,<span class="string">'off'</span>,<span class="string">'MenuBar'</span>,<span class="string">'none'</span>,<span class="string">'Resize'</span>,<span class="string">'off'</span>);
+figGui.Position(3:4) = hsliders.Position(3:4);
+</pre><img vspace="5" hspace="5" src="./readmeExtras/README_02.png" style="width:348px;height:316px;" alt=""> <h2 id="4">Link Sliders to Plotting Object</h2><p>Up until this point changes to the slider values did not affect the plot. The next step registers the callback handler from the plotter class to the GuiSliders object.</p><pre class="codeinput">addlistener(hsliders,<span class="string">'SliderUpdate'</span>,@hplotter.handleSliderUpdate);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% README - Demo of GuiSliders
+%
+% GuiSliders is a class that greatly simplifies development overhead
+% associated with sliders. The class constructs a uipanel with a
+% user-specified number of sliders. It automatically links editable text
+% boxes to the slider value and bounds. All changes to the slider values
+% are funneled up through a single event. The user need only define one
+% event handler.
+%
+% Michael R. Walker II 6/21/2017
+
+%% Getting Started
+% A simple interpolation problem is used to demonstrate efficient plot
+% update techniques. We define a class, ExamplePlotter, which services the
+% plot updates and maintains copies of the associated plot handles. We then
+% construct a GuiSliders panel in a separate figure. Finally we link the
+% GuiSliders object to the ExamplePlotter object.
+
+clear;
+
+% Reserve separate figures for plot and gui
+figPlot = figure(1);
+figPlot.Visible = 'off';
+clf;
+figGui = figure(3);
+figGui.Visible = 'off';
+clf;
+
+% Initial control coordinates for interpolation.
+% Note, we assume x(1) = 0, and x(end) = 1.
+x23 = [.3 .7];
+y = [3 2 9 8];
+
+%% Configure plotting object
+% Plotting will be handled by a separate object. Here we construct this
+% object and draw the initial plot.
+
+% Make parent figure active
+figure(figPlot);
+% Setup control parameters
+x0 = [x23,y];
+
+hplotter = ExamplePlotter(x0);
+
+
+%% Configure GUI Sliders
+% Guisliders will be drawn in a separate figure. Here we construct the
+% GuiSliders object and resize the figure window accordingly.
+
+figure(figGui); % Make parent figure active
+bounds = [repmat([0.01 0.99],2,1); repmat([0,10],4,1)];
+labels = {'x2','x3','y1','y2','y3','y4'};
+hsliders = GuiSliders(x0,'bounds',bounds,'labels',labels);
+
+% Remove most decorations & shrink to panel size
+set(figGui,'Name','GUI Sliders','NumberTitle','off',...
+'DockControls','off','MenuBar','none','Resize','off');
+figGui.Position(3:4) = hsliders.Position(3:4);
+
+%% Link Sliders to Plotting Object
+% Up until this point changes to the slider values did not affect the plot.
+% The next step registers the callback handler from the plotter class to
+% the GuiSliders object.
+
+addlistener(hsliders,'SliderUpdate',@hplotter.handleSliderUpdate);
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
